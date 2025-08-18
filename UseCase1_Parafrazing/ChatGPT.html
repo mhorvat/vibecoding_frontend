@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paraphrase for me</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Attempt to use local Britannic Bold font if available */
+    @font-face {
+      font-family: 'Britannic Bold';
+      src: local('Britannic Bold'), local('BritannicBold');
+      font-weight: bold;
+      font-style: normal;
+    }
+    body {
+      background-color: #ffffff;
+    }
+    .paraphrase-container {
+      background-color: #f8f9fa;
+      border-radius: 1rem;
+      padding: 2rem;
+      margin: 2rem auto;
+      width: 75vw;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-family: 'Britannic Bold', serif;
+      font-size: 3rem;
+      font-weight: bold;
+      text-align: start;
+    }
+    .content-row {
+      display: grid;
+      flex: 1 1 auto;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 1rem;
+    }
+    textarea {
+      width: 100%;
+      height: 100%;
+      resize: none;
+    }
+    #inputText {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    #outputText {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .btn-align {
+      grid-column: 1;
+      grid-row: 2;
+      justify-self: end;
+      width: 150px;
+      flex: 0 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="paraphrase-container">
+    <h1>Paraphrase for me</h1>
+    <div class="content-row">
+      <textarea id="inputText" class="form-control" placeholder="Type or paste text here to paraphrase..."></textarea>
+      <textarea id="outputText" class="form-control" readonly placeholder="Paraphrased text will appear here..."></textarea>
+      <button id="paraphraseBtn" type="button" class="btn btn-primary btn-align">Paraphrase</button>
+    </div>
+  </div>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('paraphraseBtn').addEventListener('click', () => {
+      const inputText = document.getElementById('inputText').value.trim();
+      const outputTextarea = document.getElementById('outputText');
+      outputTextarea.value = '';
+      if (!inputText) {
+        outputTextarea.value = 'Please enter some text to paraphrase.';
+        return;
+      }
+      // Placeholder action: replace with actual API call
+      console.log('Paraphrase button clicked. Input:', inputText);
+      outputTextarea.value = '...paraphrased text will appear here...';
+    });
+  </script>
+</body>
+</html>

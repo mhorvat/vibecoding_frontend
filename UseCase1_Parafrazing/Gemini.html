@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paraphrase for me</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Define a custom font-face that looks for a local font */
+        @font-face {
+          font-family: 'Britannic Bold';
+          /* The browser will look for these font names on the user's computer */
+          src: local('Britannic Bold'), local('Britannic-Bold');
+        }
+
+        /* Ensure html and body take full height and remove default margins */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #ffffff; /* White background for the page */
+        }
+        /* Use Flexbox to center the container on the page */
+        body {
+            display: flex;
+            align-items: center; /* Vertical center */
+            justify-content: center; /* Horizontal center */
+        }
+        /* This wrapper defines the size of our main container */
+        .content-wrapper {
+            width: 75vw;  /* 75% of the viewport width */
+            height: 80vh; /* 80% of the viewport height */
+            max-width: 1200px; /* Optional: prevents container from getting too wide */
+            max-height: 750px; /* Optional: prevents container from getting too tall */
+        }
+        /* The card will fill the wrapper and hold the content */
+        .card {
+            width: 100%;
+            height: 100%;
+            background-color: #f8f9fa; /* Light gray background */
+            border: 1px solid #dee2e6;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            display: flex; /* Use flexbox for the card itself */
+            flex-direction: column; /* Stack card content vertically */
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        /* Set font for the headline */
+        .card-title {
+            font-family: 'Britannic Bold', sans-serif; /* Use the local font first, with a fallback */
+        }
+        /* CSS Grid Layout for the main content area */
+        .grid-container {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two equal columns */
+            grid-template-rows: auto 1fr auto; /* Labels, Textareas (expanding), Button */
+            gap: 0.25rem 1rem; /* Row and column gap */
+        }
+        #copy-btn {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="card-title mb-4">Paraphrase for me</h1>
+
+                <div class="grid-container">
+                    <label for="inputText" class="form-label" style="grid-column: 1; grid-row: 1;">Original Text</label>
+                    <label for="outputText" class="form-label" style="grid-column: 2; grid-row: 1;">Paraphrased Text</label>
+
+                    <div style="grid-column: 1; grid-row: 2; min-height: 0;">
+                        <textarea class="form-control h-100" id="inputText" placeholder="Paste your text here..."></textarea>
+                    </div>
+                    <div class="position-relative h-100" style="grid-column: 2; grid-row: 2; min-height: 0;">
+                        <textarea class="form-control h-100" id="outputText" readonly placeholder="Your paraphrased text will appear here..."></textarea>
+                        <i class="bi bi-clipboard position-absolute top-0 end-0 mt-2 me-3 fs-5 text-muted" id="copy-btn" title="Copy to clipboard"></i>
+                    </div>
+
+                    <div class="d-flex justify-content-end align-items-center" style="grid-column: 1; grid-row: 3;">
+                        <button class="btn btn-primary" id="paraphrase-btn">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            Paraphrase
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const paraphraseBtn = document.getElementById('paraphrase-btn');
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const spinner = paraphraseBtn.querySelector('.spinner-border');
+        const copyBtn = document.getElementById('copy-btn');
+
+        paraphraseBtn.addEventListener('click', () => {
+            const textToParaphrase = inputText.value.trim();
+            if (textToParaphrase === '') {
+                alert('Please enter some text to paraphrase.');
+                return;
+            }
+
+            spinner.classList.remove('d-none');
+            paraphraseBtn.disabled = true;
+
+            setTimeout(() => {
+                const sampleResponse = {
+                    paraphrased_text: `This is a sample paraphrased version of your text. To make this tool fully functional, you need to replace the placeholder API call in the JavaScript section with a real paraphrasing API.`
+                };
+
+                outputText.value = sampleResponse.paraphrased_text;
+
+                spinner.classList.add('d-none');
+                paraphraseBtn.disabled = false;
+            }, 1500);
+        });
+
+        copyBtn.addEventListener('click', () => {
+            if (outputText.value) {
+                navigator.clipboard.writeText(outputText.value)
+                    .then(() => {
+                        const originalTitle = copyBtn.getAttribute('title');
+                        const tooltip = bootstrap.Tooltip.getInstance(copyBtn);
+                        copyBtn.setAttribute('title', 'Copied!');
+
+                        if (tooltip) {
+                            tooltip.dispose();
+                        }
+                        new bootstrap.Tooltip(copyBtn).show();
+
+                        setTimeout(() => {
+                           const currentTooltip = bootstrap.Tooltip.getInstance(copyBtn);
+                           if (currentTooltip) {
+                               currentTooltip.hide();
+                           }
+                           copyBtn.setAttribute('title', originalTitle);
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+            }
+        });
+
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+</body>
+</html>
