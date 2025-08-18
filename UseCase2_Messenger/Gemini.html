@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body, html {
+            height: 100%;
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #contacts-list .list-group-item {
+            cursor: pointer;
+        }
+
+        .contact-avatar {
+            width: 1.8rem;
+            height: 1.8rem;
+            object-fit: cover;
+        }
+        
+        #chat-header-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            object-fit: cover;
+        }
+
+        #contacts-list .list-group-item h5 {
+            font-size: 1rem; 
+        }
+
+        .contact-info {
+            min-width: 0;
+        }
+
+        #contacts-list .list-group-item.active {
+            background-color: #f8f9fa;
+            color: #212529;
+            border-color: #f8f9fa;
+        }
+        
+        #attachment-button {
+            color: #6c757d; /* Bootstrap's --bs-secondary-color */
+            font-size: 1.2rem;
+        }
+        
+        .chat-header-title {
+            font-size: 1.5rem;   /* Match h4 font-size */
+            line-height: 1.2;    /* Match h4 line-height */
+            margin-bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid vh-100 d-flex flex-column">
+        <div class="row flex-grow-1">
+            <div class="col-md-4 col-lg-3 border-end d-flex flex-column" id="contacts-list-container">
+                <div class="p-3 border-bottom">
+                    <h4 class="fw-bold">Chats</h4>
+                </div>
+                <div class="list-group list-group-flush overflow-auto" id="contacts-list">
+                    </div>
+            </div>
+
+            <div class="col-md-8 col-lg-9 d-flex flex-column" id="chat-container">
+                <div class="p-3 border-bottom d-flex align-items-center" id="chat-header">
+                    <img src="" class="rounded-circle me-3 d-none" alt="User Avatar" id="chat-header-avatar">
+                    <div class="chat-header-title text-muted" id="chat-header-name">Select a chat</div>
+                </div>
+                <div class="chat-messages flex-grow-1 p-3 overflow-auto" id="chat-messages">
+                    <div class="d-flex h-100 justify-content-center align-items-center">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-chat-dots" style="font-size: 4rem;"></i>
+                            <p class="lead mt-2">Select a chat to start messaging</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 border-top" id="message-form-container">
+                    <form id="message-form">
+                        <div class="d-flex align-items-center">
+                            <button class="btn me-2" type="button" id="attachment-button" disabled>
+                                <i class="bi bi-paperclip"></i>
+                            </button>
+                            <input type="text" class="form-control flex-grow-1 rounded-3" id="message-input" placeholder="Type a message..." disabled>
+                            <button class="btn btn-primary rounded-3 ms-2 px-3" type="submit" disabled>Send</button>
+                        </div>
+                    </form>
+                    <input type="file" id="file-input" class="d-none">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Element Constants
+            const contactsList = document.getElementById('contacts-list');
+            const chatHeaderAvatar = document.getElementById('chat-header-avatar');
+            const chatHeaderName = document.getElementById('chat-header-name');
+            const chatMessages = document.getElementById('chat-messages');
+            const messageForm = document.getElementById('message-form');
+            const messageInput = document.getElementById('message-input');
+            const messageSendButton = messageForm.querySelector('button[type="submit"]');
+            const attachmentButton = document.getElementById('attachment-button');
+            const fileInput = document.getElementById('file-input');
+
+            let activeContactId = null;
+
+            // --- DATA ---
+            const chatData = {
+                "1": {
+                    name: "John Doe",
+                    avatar: "https://i.pravatar.cc/150?u=john",
+                    messages: [
+                        { type: 'received', text: 'Hey! How are you?', time: '3 days ago' },
+                        { type: 'sent', text: "I'm doing great, thanks for asking! How about you?" }
+                    ]
+                },
+                "2": {
+                    name: "Jane Smith",
+                    avatar: "https://i.pravatar.cc/150?u=jane",
+                    messages: [
+                        { type: 'received', text: "Let's catch up soon.", time: '1 week ago' },
+                    ]
+                },
+                "3": {
+                    name: "Sam Wilson",
+                    avatar: "https://i.pravatar.cc/150?u=sam",
+                    messages: [
+                        { type: 'received', text: 'Great. Let me know what you think about the new project proposal I sent over, it includes all the details we discussed.', time: '2 weeks ago' },
+                    ]
+                }
+            };
+
+            // --- FUNCTIONS ---
+
+            // Load contacts into the left panel
+            function loadContacts() {
+                contactsList.innerHTML = '';
+                for (const id in chatData) {
+                    const contact = chatData[id];
+                    const lastMessage = contact.messages[contact.messages.length - 1];
+                    const contactElement = document.createElement('a');
+                    contactElement.href = '#';
+                    contactElement.classList.add('list-group-item', 'list-group-item-action', 'py-3'); 
+                    contactElement.dataset.id = id;
+
+                    contactElement.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <img src="${contact.avatar}" alt="${contact.name}" class="rounded-circle me-3 contact-avatar">
+                            <div class="flex-grow-1 contact-info">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="fw-bold mb-1">${contact.name}</h5>
+                                    <small class="text-muted">${lastMessage.time || ''}</small>
+                                </div>
+                                <p class="mb-0 text-muted text-truncate">${lastMessage.text}</p>
+                            </div>
+                        </div>
+                    `;
+                    contactsList.appendChild(contactElement);
+                }
+            }
+
+            // Load a specific chat into the right panel
+            function loadChat(contactId) {
+                if (!chatData[contactId]) return;
+
+                activeContactId = contactId;
+                const contact = chatData[contactId];
+
+                // Update header
+                chatHeaderAvatar.classList.remove('d-none');
+                chatHeaderAvatar.src = contact.avatar;
+                chatHeaderName.classList.add('fw-bold');
+                chatHeaderName.classList.remove('text-muted');
+                chatHeaderName.textContent = contact.name;
+
+                // Update messages
+                chatMessages.innerHTML = '';
+                contact.messages.forEach(message => {
+                    const messageElement = createMessageElement(message.text, message.type);
+                    chatMessages.appendChild(messageElement);
+                });
+
+                // Enable message input controls
+                messageInput.disabled = false;
+                messageSendButton.disabled = false;
+                attachmentButton.disabled = false;
+                messageInput.placeholder = `Type a message to ${contact.name}...`;
+
+                // Set active class in contacts list
+                document.querySelectorAll('#contacts-list .list-group-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.id === contactId) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                // Scroll to the bottom of the chat
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function createMessageElement(text, type) {
+                const messageWrapper = document.createElement('div');
+                const messageBubble = document.createElement('div');
+                const messageText = document.createElement('p');
+
+                messageWrapper.classList.add('d-flex', 'mb-3');
+                messageBubble.classList.add('rounded-4', 'p-3');
+                messageText.classList.add('mb-0');
+                messageText.textContent = text;
+
+                if (type === 'sent') {
+                    messageWrapper.classList.add('justify-content-end');
+                    messageBubble.classList.add('bg-primary', 'text-white');
+                } else { // received
+                    messageWrapper.classList.add('justify-content-start');
+                    messageBubble.classList.add('bg-light');
+                }
+
+                messageBubble.appendChild(messageText);
+                messageWrapper.appendChild(messageBubble);
+                return messageWrapper;
+            }
+
+            // --- EVENT LISTENERS ---
+
+            // Listen for clicks on the contacts list
+            contactsList.addEventListener('click', function(event) {
+                let target = event.target;
+                while (target != this && !target.dataset.id) {
+                    target = target.parentNode;
+                }
+                if (target && target.dataset.id) {
+                    event.preventDefault();
+                    loadChat(target.dataset.id);
+                }
+            });
+
+            // Listen for new message submissions
+            messageForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const messageText = messageInput.value.trim();
+
+                if (messageText !== '' && activeContactId) {
+                    const messageElement = createMessageElement(messageText, 'sent');
+                    chatMessages.appendChild(messageElement);
+                    chatData[activeContactId].messages.push({
+                        type: 'sent',
+                        text: messageText,
+                        time: 'Just now'
+                    });
+
+                    messageInput.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    // Optional: Simulate a reply
+                    setTimeout(() => {
+                        const replyText = "Awesome!";
+                        const replyElement = createMessageElement(replyText, 'received');
+                        chatMessages.appendChild(replyElement);
+                         chatData[activeContactId].messages.push({
+                            type: 'received',
+                            text: replyText,
+                        });
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 1500);
+                }
+            });
+
+            // Listen for attachment button click to open file explorer
+            attachmentButton.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Optional: Listen for when a file is selected
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    // In a real app, you would handle the file upload here.
+                    const fileMessage = `File selected: ${file.name}`;
+                    const messageElement = createMessageElement(fileMessage, 'sent');
+                    chatMessages.appendChild(messageElement);
+                    chatData[activeContactId].messages.push({
+                        type: 'sent',
+                        text: fileMessage,
+                        time: 'Just now'
+                    });
+                     chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            });
+
+            // --- INITIALIZATION ---
+            loadContacts();
+        });
+    </script>
+</body>
+</html>

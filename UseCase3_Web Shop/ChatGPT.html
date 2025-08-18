@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twisted Corner Store</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@300;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body, html { margin: 0; padding: 0; background: #F9F5FF; font-family: 'Comic Neue', cursive; }
+    .navbar { background: #6D597A !important; }
+    .navbar-brand, .nav-link, .btn-outline-light { font-family: 'Fredoka One', cursive; }
+    .nav-link, .navbar-brand { color: #FFF3F8 !important; }
+    .dropdown-menu { background: #FFE8F7; }
+    .dropdown-item { color: #6D597A; }
+    .dropdown-item:hover { background: #F3D9E9; }
+    header { background: #C06C84; }
+    header h1, header p { font-family: 'Fredoka One', cursive; color: #FFF3F8; }
+    .card { border: none; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; }
+    .card-body { background: #FFFFFF; }
+    .btn-primary { background: #355C7D; border: none; font-family: 'Fredoka One', cursive; }
+    .btn-primary:hover { background: #6C5B7B; }
+    .badge-sale { background: #F67280 !important; }
+    .card-img-top { width: 100%; height: auto; object-fit: cover; padding: 0.5rem; }
+    /* Offcanvas */
+    .offcanvas { background: #FFFFFF; }
+    .offcanvas-header { border-bottom: 1px solid #EDEDED; }
+    .btn-close { filter: invert(50%); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img src="web_shop_logo.png" alt="Twisted Corner Store Logo" width="32" height="32" class="d-inline-block align-text-top me-2">
+      Twisted Corner Store
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link active" href="#" onclick="renderProducts('')">Home</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="shopDropdown" role="button" data-bs-toggle="dropdown">
+            Shop
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="shopDropdown">
+            <li><a class="dropdown-item filter-item" href="#" data-filter="3x3 Cube">3x3 Cubes</a></li>
+            <li><a class="dropdown-item filter-item" href="#" data-filter="2x2 Cube">2x2 Cubes</a></li>
+            <li><a class="dropdown-item filter-item" href="#" data-filter="4x4 Cube">4x4 Cubes</a></li>
+            <li><a class="dropdown-item filter-item" href="#" data-filter="Pyraminx">Pyraminxes</a></li>
+            <li><a class="dropdown-item filter-item" href="#" data-filter="Megaminx">Megaminxes</a></li>
+            <li><a class="dropdown-item filter-item" href="#" data-filter="Mirror Cube">Mirror Cubes</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex" role="search" onsubmit="return false;">
+        <input id="searchInput" class="form-control me-2 rounded-pill" type="search" placeholder="Search puzzles" aria-label="Search">
+      </form>
+      <button class="btn btn-outline-light position-relative ms-2 rounded-pill" id="cart-button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart">
+        <i class="bi bi-cart-fill me-1"></i>Cart
+        <span class="badge position-absolute top-0 start-100 translate-middle" id="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="text-center text-white py-5 mb-0">
+  <div class="container-fluid">
+    <h1 class="display-4 mb-2" id="pageTitle">Shop Rubik's Cubes</h1>
+    <p class="lead mb-0">Find your perfect cube puzzle</p>
+  </div>
+</header>
+
+<main class="container my-5">
+  <div class="row g-4" id="products"></div>
+</main>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart" aria-labelledby="offcanvasCartLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasCartLabel">Your Cart</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group mb-3" id="cart-items"></ul>
+    <p id="cart-empty" class="text-muted">No items in cart.</p>
+    <div class="mt-3 d-flex justify-content-between">
+      <strong>Total:</strong>
+      <span id="cart-total">$0.00</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const products = [
+    { id:1, name: "3x3 Cube", price: 14.99, img: "3x3.webp" },
+    { id:2, name: "2x2 Cube", price: 9.99, img: "2x2.webp" },
+    { id:3, name: "4x4 Cube", price: 19.99, sale: true, original: 24.99, img: "4x4.webp" },
+    { id:4, name: "Pyraminx", price: 12.99, img: "Pyraminx.webp" },
+    { id:5, name: "Megaminx", price: 29.99, img: "Megaminx.webp" },
+    { id:6, name: "Mirror Cube", price: 17.99, sale: true, original: 22.99, img: "Mirror.webp" }
+  ];
+  
+  // Load cart from localStorage or initialize
+  let cartItems = JSON.parse(localStorage.getItem('cartItems') || '{}');
+
+  const cartCountEl = document.getElementById('cart-count');
+  const productsContainer = document.getElementById('products');
+  const cartItemsList = document.getElementById('cart-items');
+  const cartEmptyMsg = document.getElementById('cart-empty');
+  const cartTotalEl = document.getElementById('cart-total');
+  const searchInput = document.getElementById('searchInput');
+  const pageTitle = document.getElementById('pageTitle');
+
+  function saveCart() {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }
+
+  function updateCartDisplay() {
+    cartItemsList.innerHTML = '';
+    const items = Object.values(cartItems);
+    if (items.length === 0) {
+      cartEmptyMsg.style.display = 'block';
+    } else {
+      cartEmptyMsg.style.display = 'none';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `
+          <div>
+            ${item.name} x<span>${item.qty}</span>
+          </div>
+          <strong>$${(item.price * item.qty).toFixed(2)}</strong>
+        `;
+        cartItemsList.appendChild(li);
+      });
+    }
+    const totalQty = items.reduce((sum, it) => sum + it.qty, 0);
+    cartCountEl.innerText = totalQty;
+    const totalPrice = items.reduce((sum, it) => sum + it.price * it.qty, 0);
+    cartTotalEl.innerText = `$${totalPrice.toFixed(2)}`;
+  }
+
+  function addToCart(p) {
+    if (cartItems[p.name]) {
+      cartItems[p.name].qty += 1;
+    } else {
+      cartItems[p.name] = { ...p, qty: 1 };
+    }
+    saveCart();
+    updateCartDisplay();
+  }
+
+  function renderProducts(filter = '') {
+    productsContainer.innerHTML = '';
+    const filtered = filter ? products.filter(p => p.name === filter) : products;
+    pageTitle.innerText = filter ? filter + 's' : "Shop Rubik's Cubes";
+    filtered.forEach(p => {
+      const col = document.createElement('div');
+      col.className = 'col-sm-6 col-md-4 col-lg-3';
+      const card = document.createElement('div');
+      card.className = 'card position-relative h-100';
+
+      if (p.sale) {
+        const badge = document.createElement('span');
+        badge.className = 'badge badge-sale';
+        badge.innerText = 'Sale';
+        card.appendChild(badge);
+      }
+
+      const img = document.createElement('img');
+      img.src = p.img;
+      img.className = 'card-img-top';
+      img.alt = p.name;
+      card.appendChild(img);
+
+      const body = document.createElement('div');
+      body.className = 'card-body d-flex flex-column';
+      const title = document.createElement('h5');
+      title.className = 'card-title';
+      title.innerText = p.name;
+      body.appendChild(title);
+
+      const price = document.createElement('p');
+      price.className = 'card-text mb-4';
+      price.innerHTML = p.sale
+        ? `<del>$${p.original.toFixed(2)}</del> <strong>$${p.price.toFixed(2)}</strong>`
+        : `<strong>$${p.price.toFixed(2)}</strong>`;
+      body.appendChild(price);
+
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary mt-auto';
+      btn.innerText = 'Add to cart';
+      btn.onclick = () => addToCart(p);
+      body.appendChild(btn);
+
+      card.appendChild(body);
+      col.appendChild(card);
+      productsContainer.appendChild(col);
+    });
+  }
+
+  document.querySelectorAll('.filter-item').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      renderProducts(el.dataset.filter);
+    });
+  });
+
+  searchInput.addEventListener('input', e => renderProducts(e.target.value));
+
+  // Initial render & load cart
+  renderProducts();
+  updateCartDisplay();
+</script>
+</body>
+</html>

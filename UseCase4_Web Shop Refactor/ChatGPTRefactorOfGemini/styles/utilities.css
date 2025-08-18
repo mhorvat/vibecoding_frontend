@@ -1,0 +1,22 @@
+.u-skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 0.5rem;
+  z-index: 100;
+}
+
+.u-skip-link:focus {
+  top: 0;
+}
+
+.u-text-center {
+  text-align: center;
+}
+
+.btn--block {
+  display: block;
+  width: 100%;
+}

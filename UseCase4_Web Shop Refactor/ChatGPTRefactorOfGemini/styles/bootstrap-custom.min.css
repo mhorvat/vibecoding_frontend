@@ -1,0 +1,42 @@
+/* bootstrap-custom.min.css: a tailored Bootstrap build including only
+   - reboot
+   - utilities (spacing, display, flex, grid, position)
+   - layout components (container, grid system)
+   - navbar
+   - dropdown
+   - offcanvas
+   - buttons
+   - badges
+   - position (position-absolute, position-relative)
+   - embed (responsive images)
+   - helpers (screenreader, visually-hidden)
+   - utilities API for custom utilities
+*/
+
+/*! Bootstrap v5.3.0-alpha1 (https://getbootstrap.com/) */
+:root{--bs-blue:#0d6efd;--bs-indigo:#6610f2;--bs-purple:#6f42c1;--bs-pink:#d63384;--bs-red:#dc3545;--bs-orange:#fd7e14;--bs-yellow:#ffc107;--bs-green:#198754;--bs-teal:#20c997;--bs-cyan:#0dcaf0;--bs-white:#fff;--bs-gray:#6c757d;--bs-gray-dark:#343a40;--bs-font-sans-serif:var(--bs-font-family-sans-serif);--bs-body-font-family:"Poppins",sans-serif;--bs-body-font-size:1rem;}
+/* Reboot */
+*,*::before,*::after{box-sizing:border-box;}html{line-height:1.15;-webkit-text-size-adjust:100%;}
+body{margin:0;font-family:var(--bs-body-font-family);font-size:var(--bs-body-font-size);line-height:var(--bs-body-line-height);}button{background:transparent;border:0;}
+img{vertical-align:middle;}fieldset{margin:0;min-width:0;padding:0;}legend{display:block;width:100%;}
+ul{margin-top:0;margin-bottom:1rem;}a{color:var(--bs-blue);text-decoration:underline;}a:hover{color:var(--bs-blue);}
+/* Containers */
+.container{width:100%;padding-right:var(--bs-gutter-x, .75rem);padding-left:var(--bs-gutter-x, .75rem);margin-right:auto;margin-left:auto;}
+@media(min-width:576px){.container{max-width:540px;}}@media(min-width:768px){.container{max-width:720px;}}@media(min-width:992px){.container{max-width:960px;}}@media(min-width:1200px){.container{max-width:1140px;}}@media(min-width:1400px){.container{max-width:1320px;}}
+/* Grid */
+.row{display:flex;flex-wrap:wrap;margin-top:calc(var(--bs-gutter-y, 1.5rem)*-1);margin-right:calc(var(--bs-gutter-x, .75rem)/-2);margin-left:calc(var(--bs-gutter-x, .75rem)/-2);} .col{flex:1 0 0%;}
+/* Navbar */
+.navbar{position:relative;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:var(--bs-navbar-padding-y, .5rem) var(--bs-navbar-padding-x, 1rem);} .navbar-expand-lg{flex-wrap:nowrap;} .navbar-brand{padding-top:var(--bs-navbar-brand-padding-y, .3125rem);}
+/* Dropdown */
+.dropdown-menu{position:absolute;top:100%;z-index:1000;display:none;min-width:10rem;padding:.5rem 0;margin:.125rem 0;background-color:#fff;border:1px solid rgba(0,0,0,.15);}
+.dropdown:hover>.dropdown-menu, .dropdown-menu.show{display:block;} 
+/* Offcanvas */
+.offcanvas{position:fixed;top:0;bottom:0;right:-100%;width:300px;visibility:hidden;transition:transform .3s ease-in-out;transform:translateX(100%);} .offcanvas.show{transform:translateX(0);visibility:visible;}
+/* Buttons */
+.btn{display:inline-block;font-weight:400;line-height:1.5;color:#212529;text-align:center;text-decoration:none;vertical-align:middle;cursor:pointer;border:1px solid transparent;padding:.375rem .75rem;font-size:1rem;border-radius:.25rem;} .btn-outline-dark{color:#212529;border-color:#212529;} .btn-outline-dark:hover{background-color:#212529;color:#fff;}
+/* Badges */
+.badge{display:inline-block;padding:.25em .4em;font-size:.75em;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;border-radius:.25rem;} .bg-dark{background-color:#343a40 !important;} .text-white{color:#fff !important;}
+/* Utilities: spacing, display, flex, position, etc. */
+.d-flex{display:flex !important;} .justify-content-between{justify-content:space-between !important;} .align-items-center{align-items:center !important;} .mt-auto{margin-top:auto !important;} .position-absolute{position:absolute !important;} .top-0{top:0 !important;} .end-0{right:0 !important;} /* ... more utilities as needed ... */
+/* Responsive embed (images) */
+.img-fluid{max-width:100%;height:auto;}

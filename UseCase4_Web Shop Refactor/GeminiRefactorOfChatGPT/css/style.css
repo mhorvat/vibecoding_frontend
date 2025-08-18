@@ -1,0 +1,133 @@
+:root {
+  --color-primary: #6D597A;
+  --color-secondary: #355C7D;
+  --color-accent: #F67280;
+  --color-header-bg: #C06C84;
+  --color-light-bg: #F9F5FF;
+  --color-text-light: #FFF3F8;
+  --color-dropdown-bg: #FFE8F7;
+  --color-dropdown-text: #6D597A;
+  --font-primary: 'Fredoka One', cursive;
+  --font-secondary: 'Comic Neue', cursive;
+}
+
+body {
+  background-color: var(--color-light-bg);
+  font-family: var(--font-secondary);
+}
+
+/* --- Navigation --- */
+.main-nav {
+  background-color: var(--color-primary);
+}
+
+.main-nav .navbar-brand,
+.main-nav .nav-link,
+.main-nav .btn-outline-light {
+  font-family: var(--font-primary);
+  color: var(--color-text-light);
+}
+.main-nav .nav-link:hover, .main-nav .nav-link:focus {
+    color: white;
+}
+.main-nav .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.main-nav .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 243, 248, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.main-nav__dropdown-menu {
+  background-color: var(--color-dropdown-bg);
+}
+.main-nav__dropdown-menu .dropdown-item {
+  color: var(--color-dropdown-text);
+  font-family: var(--font-secondary);
+  font-weight: 700;
+}
+.main-nav__dropdown-menu .dropdown-item:hover,
+.main-nav__dropdown-menu .dropdown-item:focus {
+  background-color: #F3D9E9;
+}
+
+
+/* --- Header --- */
+.page-header {
+  background-color: var(--color-header-bg);
+  color: var(--color-text-light);
+}
+.page-header h1, .page-header p {
+  font-family: var(--font-primary);
+}
+
+/* --- Product Card --- */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: white;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.product-card__image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  padding: 0.5rem;
+}
+
+.product-card__body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Key for equal height footers */
+  padding: 1.5rem;
+}
+
+.product-card__title {
+  font-family: var(--font-primary);
+  color: var(--color-secondary);
+  font-size: 1.25rem;
+}
+
+.product-card__price {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.product-card__price del {
+  color: #888;
+}
+
+.product-card__button {
+  background-color: var(--color-secondary);
+  border: none;
+  font-family: var(--font-primary);
+  margin-top: auto; /* Pushes button to the bottom */
+}
+.product-card__button:hover {
+  background-color: #6C5B7B;
+}
+
+.product-card__badge--sale {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: var(--color-accent);
+  color: white;
+  z-index: 10;
+}
+
+/* --- Cart Offcanvas --- */
+.cart-offcanvas .offcanvas-header {
+    border-bottom: 1px solid #EDEDED;
+}
+.cart-offcanvas .btn-close {
+  filter: invert(50%);
+}

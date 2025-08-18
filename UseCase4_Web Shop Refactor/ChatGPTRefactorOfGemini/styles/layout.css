@@ -1,0 +1,40 @@
+:root {
+  --color-primary: #0d6efd;
+  --color-secondary: #0dcaf0;
+  --color-bg: #f8f9fa;
+  --font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.hero {
+  background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+  color: #fff;
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.product-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  padding: 1rem;
+}
+
+.footer {
+  background-color: #343a40;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}

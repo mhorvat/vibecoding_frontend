@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twisted Corner Store</title>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa; /* Light gray background */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack children vertically */
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+        }
+        main {
+            flex-grow: 1; /* Allow main content to grow and fill available space */
+        }
+        .navbar {
+            background-color: #ffffff !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .header {
+            background-color: #0d6efd; /* Vibrant blue */
+            background-image: linear-gradient(45deg, #0d6efd, #0dcaf0); /* Fun gradient */
+        }
+        .product-image {
+            width: 100%; /* Make image take full width of its container */
+            height: 200px; /* Gives all images a consistent height for alignment */
+            object-fit: contain; /* Ensures the entire image fits without being cropped */
+            padding: 1rem; /* Add some space around the image */
+        }
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,.1);
+            transition: transform .2s;
+        }
+        .card:hover {
+            transform: scale(1.03);
+        }
+        .offcanvas-body .list-group-item img {
+            max-width: 50px;
+            margin-right: 15px;
+        }
+        .btn-primary {
+             background-color: #ffc107; /* Bright yellow */
+             border-color: #ffc107;
+             color: #212529;
+             font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+        }
+        .btn-outline-dark {
+            font-weight: 600;
+        }
+        .footer {
+            background-color: #343a40; /* Darker footer */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand fw-bold" href="#" id="brand-link">
+                <img src="web_shop_logo.png" alt="Twisted Corner Store Logo" style="height: 30px; margin-right: 10px;">
+                Twisted Corner Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link" href="#" id="home-nav-link">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="about-nav-link">About</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item category-filter" href="#" data-category="all">All Puzzles</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item category-filter" href="#" data-category="2x2">2x2 Cubes</a></li>
+                            <li><a class="dropdown-item category-filter" href="#" data-category="3x3">3x3 Cubes</a></li>
+                            <li><a class="dropdown-item category-filter" href="#" data-category="4x4">4x4 Cubes</a></li>
+                            <li><a class="dropdown-item category-filter" href="#" data-category="megaminx">Megaminxes</a></li>
+                            <li><a class="dropdown-item category-filter" href="#" data-category="pyraminx">Pyraminxes</a></li>
+                            <li><a class="dropdown-item category-filter" href="#" data-category="mirror">Mirror Cubes</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="d-flex me-3" role="search">
+                    <input class="form-control" type="search" placeholder="Search puzzles..." aria-label="Search" id="search-input">
+                </form>
+                <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#shoppingCart" aria-controls="shoppingCart">
+                    <i class="bi-cart-fill me-1"></i>
+                    Cart
+                    <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>   
+    <main id="home-page">
+        <!-- Header-->
+        <header class="py-5 header">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder" id="page-title">Shop Rubik's Cubes</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Find your perfect cube puzzle</p>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div id="product-list" class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4">
+                    <!-- Product 1 -->
+                    <div class="col mb-5 product-item" data-category="2x2">
+                        <div class="card h-100 product-card">
+                            <img class="card-img-top product-image" src="2x2.webp" alt="2x2 Rubik's Cube" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder product-name">2x2 Rubik's Cube</h5>
+                                    <span class="product-price">$10.00</span>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><button class="btn btn-outline-dark mt-auto add-to-cart" data-price="10.00">Add to cart</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 2 -->
+                    <div class="col mb-5 product-item" data-category="3x3">
+                        <div class="card h-100 product-card">
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <img class="card-img-top product-image" src="3x3.webp" alt="3x3 Rubik's Cube" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder product-name">3x3 Rubik's Cube</h5>
+                                    <span class="text-muted text-decoration-line-through">$20.00</span>
+                                    <span class="product-price">$18.00</span>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><button class="btn btn-outline-dark mt-auto add-to-cart" data-price="18.00">Add to cart</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 3 -->
+                    <div class="col mb-5 product-item" data-category="4x4">
+                        <div class="card h-100 product-card">
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <img class="card-img-top product-image" src="4x4.webp" alt="4x4 Rubik's Cube" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder product-name">4x4 Rubik's Cube</h5>
+                                    <span class="text-muted text-decoration-line-through">$25.00</span>
+                                    <span class="product-price">$22.00</span>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><button class="btn btn-outline-dark mt-auto add-to-cart" data-price="22.00">Add to cart</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 4 -->
+                    <div class="col mb-5 product-item" data-category="megaminx">
+                        <div class="card h-100 product-card">
+                            <img class="card-img-top product-image" src="Megaminx.webp" alt="Megaminx" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder product-name">Megaminx</h5>
+                                    <span class="product-price">$30.00</span>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><button class="btn btn-outline-dark mt-auto add-to-cart" data-price="30.00">Add to cart</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 5 -->
+                    <div class="col mb-5 product-item" data-category="pyraminx">
+                        <div class="card h-100 product-card">
+                            <img class="card-img-top product-image" src="Pyraminx.webp" alt="Pyraminx" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder product-name">Pyraminx</h5>
+                                    <span class="product-price">$12.00</span>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><button class="btn btn-outline-dark mt-auto add-to-cart" data-price="12.00">Add to cart</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 6 -->
+                    <div class="col mb-5 product-item" data-category="mirror">
+                        <div class="card h-100 product-card">
+                            <img class="card-img-top product-image" src="Mirror.webp" alt="Mirror Cube" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder product-name">Mirror Cube</h5>
+                                    <span class="product-price">$15.00</span>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><button class="btn btn-outline-dark mt-auto add-to-cart" data-price="15.00">Add to cart</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>   
+    <main id="about-page" class="container py-5" style="display: none;">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="mb-4">About Twisted Corner Store</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam. Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis, neque.</p>
+                <p>Praesent vitae arcu tempor neque lacinia pretium. Morbi vitae tellus sed dolor semper porta. Nunc dui lectus, congue vel, scelerisque id, imperdiet magna. Donec vel neque.</p>
+            </div>
+        </div>
+    </main>
+    <!-- Shopping Cart Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="shoppingCart" aria-labelledby="shoppingCartLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="shoppingCartLabel">Shopping Cart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="cart-items-container" class="list-group mb-3">
+                <!-- Cart items will be inserted here by JavaScript -->
+                <p id="cart-empty-message">Your cart is empty.</p>
+            </div>
+            <div class="d-flex justify-content-between fs-5 fw-bold">
+                <span>Total:</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="btn btn-primary w-100 mt-3">Checkout</button>
+        </div>
+    </div>
+    <!-- Footer-->
+    <footer class="py-5 footer">
+        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Twisted Corner Store 2025</p></div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- DOM Elements ---
+            const homePage = document.getElementById('home-page');
+            const aboutPage = document.getElementById('about-page');
+            const homeNavLink = document.getElementById('home-nav-link');
+            const aboutNavLink = document.getElementById('about-nav-link');
+            const brandLink = document.getElementById('brand-link');
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            const cartCountBadge = document.getElementById('cart-count');
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const cartTotalElement = document.getElementById('cart-total');
+            const searchInput = document.getElementById('search-input');
+            const productItems = document.querySelectorAll('.product-item');
+            const categoryFilters = document.querySelectorAll('.category-filter');
+            const pageTitle = document.getElementById('page-title');
+            // --- State ---
+            let cart = [];
+            /**
+             * Saves the current cart state to localStorage.
+             */
+            function saveCart() {
+                localStorage.setItem('twistedCornerCart', JSON.stringify(cart));
+            }
+            /**
+             * Loads the cart state from localStorage.
+             */
+            function loadCart() {
+                const savedCart = localStorage.getItem('twistedCornerCart');
+                if (savedCart) {
+                    cart = JSON.parse(savedCart);
+                }
+            }         
+            // --- Event Listeners ---
+            homeNavLink.addEventListener('click', showHomePage);
+            aboutNavLink.addEventListener('click', showAboutPage);
+            brandLink.addEventListener('click', showHomePage);
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', handleAddToCartClick);
+            });
+            searchInput.addEventListener('input', handleSearch);
+            categoryFilters.forEach(filter => {
+                filter.addEventListener('click', (event) => {
+                    handleCategoryFilter(event);
+                    showHomePage(event); // Switch to home view when a category is selected
+                });
+            });
+            // --- Functions ---           
+            /**
+             * Shows the Home page content and hides the About page.
+             * @param {Event} event The click event.
+             */
+            function showHomePage(event) {
+                if (event) event.preventDefault();
+                homePage.style.display = 'block';
+                aboutPage.style.display = 'none';
+                homeNavLink.classList.add('active');
+                aboutNavLink.classList.remove('active');
+            }            
+            /**
+             * Shows the About page content and hides the Home page.
+             * @param {Event} event The click event.
+             */
+            function showAboutPage(event) {
+                if (event) event.preventDefault();
+                homePage.style.display = 'none';
+                aboutPage.style.display = 'block';
+                homeNavLink.classList.remove('active');
+                aboutNavLink.classList.add('active');
+            }
+            /**
+             * Handles filtering products based on dropdown category selection and updates the page title.
+             */
+            function handleCategoryFilter(event) {
+                event.preventDefault(); 
+                const selectedCategory = event.target.dataset.category;
+                const categoryName = event.target.innerText;               
+                if (selectedCategory === 'all') {
+                    pageTitle.innerText = "Shop Rubik's Cubes";
+                } else {
+                    pageTitle.innerText = categoryName;
+                }                
+                productItems.forEach(item => {
+                    const itemCategory = item.dataset.category;
+                    if (selectedCategory === 'all' || selectedCategory === itemCategory) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+            /**
+             * Handles filtering products based on search input.
+             */
+            function handleSearch(event) {
+                const searchTerm = event.target.value.toLowerCase();
+                productItems.forEach(item => {
+                    const productName = item.querySelector('.product-name').innerText.toLowerCase();
+                    if (productName.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+            /**
+             * Handles adding an item to the cart or incrementing its quantity.
+             * @param {Event} event The click event.
+             */
+            function handleAddToCartClick(event) {
+                const button = event.target;
+                const card = button.closest('.product-card');               
+                const itemName = card.querySelector('.product-name').innerText;
+                const itemPrice = parseFloat(button.dataset.price);
+                const itemImageSrc = card.querySelector('.product-image').src;
+                const existingItem = cart.find(item => item.name === itemName);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({
+                        name: itemName,
+                        price: itemPrice,
+                        image: itemImageSrc,
+                        quantity: 1
+                    });
+                }
+                updateCartUI();
+            }           
+            /**
+             * Handles removing an entire item group from the cart.
+             * @param {string} itemName The name of the item to remove.
+             */
+            function handleRemoveItemClick(itemName) {
+                cart = cart.filter(item => item.name !== itemName);
+                updateCartUI();
+            }
+            /**
+             * Updates all parts of the UI that depend on the cart state and saves the cart.
+             */
+            function updateCartUI() {
+                updateCartBadge();
+                updateCartPanel();
+                updateCartTotal();
+                saveCart(); // Save the cart every time the UI is updated
+            }
+            /**
+             * Updates the cart item count badge to show total number of items.
+             */
+            function updateCartBadge() {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCountBadge.innerText = totalItems;
+            }
+            /**
+             * Renders the items in the cart panel, grouping identical items.
+             */
+            function updateCartPanel() {
+                cartItemsContainer.innerHTML = ''; 
+                if (cart.length === 0) {
+                    const p = document.createElement('p');
+                    p.id = 'cart-empty-message';
+                    p.textContent = 'Your cart is empty.';
+                    cartItemsContainer.appendChild(p);
+                } else {
+                    cart.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');                       
+                        const lineItemTotal = item.price * item.quantity;
+                        itemElement.innerHTML = `
+                            <div class="d-flex align-items-center">
+                                <img src="${item.image}" alt="${item.name}" class="rounded">
+                                <div>
+                                    <div class="fw-bold">${item.name}</div>
+                                    <small>$${item.price.toFixed(2)} x ${item.quantity}</small>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column align-items-end">
+                                <span class="fw-bold mb-1">$${lineItemTotal.toFixed(2)}</span>
+                                <button class="btn btn-sm btn-outline-danger remove-from-cart" data-name="${item.name}">&times;</button>
+                            </div>
+                        `;
+                        cartItemsContainer.appendChild(itemElement);
+                    });
+                    document.querySelectorAll('.remove-from-cart').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const itemNameToRemove = event.currentTarget.dataset.name;
+                            handleRemoveItemClick(itemNameToRemove);
+                        });
+                    });
+                }
+            }
+            /**
+             * Calculates and displays the total price for all items in the cart.
+             */
+            function updateCartTotal() {
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                cartTotalElement.innerText = `$${total.toFixed(2)}`;
+            }
+            // --- Initial Load ---
+            loadCart(); // Load the cart from localStorage when the page loads
+            showHomePage(); // Set the initial view to be the home page
+            updateCartUI(); // Update the UI to reflect the loaded cart
+        });
+    </script>
+</body>
+</html>

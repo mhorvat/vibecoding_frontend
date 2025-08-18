@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messenger App</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body, html { height: 100%; margin: 0; display: flex; flex-direction: column; }
+    .main-container { flex: 1; display: flex; overflow: hidden; }
+    .contacts-sidebar { width: 25%; background-color: #f1f1f1; border-right: 1px solid #dee2e6; overflow-y: auto; }
+    .contacts-header { padding: 0.75rem 1rem; font-weight: bold; text-transform: uppercase; font-size: 1.25rem; border-bottom: 1px solid #dee2e6; background-color: #e9ecef; }
+    .contact-item { padding: 0.75rem 1rem; border-bottom: 1px solid #dee2e6; cursor: pointer; }
+    .contact-item:hover { background-color: #e2e6ea; }
+    .contact-item.active { background-color: #d0d4d8; font-weight: bold; }
+    .chat-area { width: 75%; display: flex; flex-direction: column; background-color: #f8f9fa; }
+    .chat-header { padding: 0.75rem 1rem; font-weight: bold; font-size: 1.25rem; border-bottom: 1px solid #dee2e6; background-color: #e9ecef; }
+    .chat-container { flex: 1; overflow-y: auto; padding: 1rem; }
+    .message { display: table; clear: both; width: auto; max-width: 50%; margin-bottom: 0.5rem; padding: 0.5rem; word-wrap: break-word; border-radius: 1rem; }
+    .message.incoming { margin-right: auto; background-color: #e9ecef; }
+    .message.outgoing { margin-left: auto; background-color: #0d6efd; color: white; }
+    .input-group-wrapper { padding: 1rem; background-color: #fff; border-top: 1px solid #dee2e6; }
+    /* Round all four corners of the bottom three controls equally */
+    #attachButton {
+      margin-right: 0.5rem;
+      border-radius: 0.5rem !important;
+    } 
+    .input-group .form-control {
+      flex: 1;
+      margin-right: 0.5rem;
+      border-radius: 0.5rem !important;
+    } 
+    .btn-send {
+      margin-left: 0.5rem;
+      border-radius: 0.5rem !important;
+    } 
+  </style>
+</head>
+<body>
+  <header class="bg-primary text-white text-center py-2">
+    <h1 class="h4 mb-0">Messenger</h1>
+  </header>
+  <div class="main-container">
+    <div class="contacts-sidebar">
+      <div class="contacts-header">Chats</div>
+      <div class="contact-item">John Doe</div>
+      <div class="contact-item">Jane Smith</div>
+      <div class="contact-item">Alice Johnson</div>
+      <div class="contact-item">Bob Brown</div>
+      <div class="contact-item">Carol White</div>
+    </div>
+    <div class="chat-area">
+      <div class="chat-header" id="chatHeader">Select a chat</div>
+      <div class="chat-container" id="chatContainer"></div>
+      <div class="input-group-wrapper">
+        <div class="input-group">
+          <button class="btn btn-outline-secondary" id="attachButton" title="Attach file" disabled>
+            <i class="bi bi-paperclip"></i>
+          </button>
+          <input type="file" id="fileInput" style="display:none;" multiple>
+          <input type="text" class="form-control" placeholder="Type a message..." id="messageInput" disabled>
+          <button class="btn btn-primary btn-send" id="sendButton" disabled>Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatContainer = document.getElementById('chatContainer');
+      const messageInput = document.getElementById('messageInput');
+      const sendButton = document.getElementById('sendButton');
+      const chatHeader = document.getElementById('chatHeader');
+      const attachButton = document.getElementById('attachButton');
+      const fileInput = document.getElementById('fileInput');
+
+      // Open file chooser
+      attachButton.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', e => {
+        const files = Array.from(e.target.files).map(f => f.name).join(', ');
+        if (files) appendMessage(files, 'outgoing');
+        fileInput.value = '';
+      });
+
+      const chats = {
+        'John Doe': ['Hey there!', 'How are you?', 'Long time no see.'],
+        'Jane Smith': ['Hi Jane!', 'Are we still on for tomorrow?', 'Let me know.'],
+        'Alice Johnson': ['Hello!', 'Can you send the report?', 'Thanks!'],
+        'Bob Brown': ['Yo!', 'Wanna catch up later?', 'Ping me.'],
+        'Carol White': ['Good morning!', 'Don\'t forget our meeting at 3.']
+      };
+
+      async function sendMessageApi(message) { return Promise.resolve(); }
+      async function receiveMessageApi() { return Promise.resolve('This is a simulated reply.'); }
+
+      function appendMessage(text, type) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', type);
+        msgDiv.textContent = text;
+        chatContainer.appendChild(msgDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+
+      function loadChat(name) {
+        chatContainer.innerHTML = '';
+        (chats[name] || []).forEach(msg => appendMessage(msg, 'incoming'));
+      }
+
+      function selectContact(contactEl) {
+        document.querySelectorAll('.contact-item').forEach(el => el.classList.remove('active'));
+        contactEl.classList.add('active');
+        chatHeader.textContent = contactEl.textContent;
+        attachButton.disabled = false;
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+        loadChat(chatHeader.textContent);
+      }
+
+      document.querySelectorAll('.contact-item').forEach(item => item.addEventListener('click', () => selectContact(item)));
+
+      sendButton.addEventListener('click', async () => {
+        const text = messageInput.value.trim(); if (!text) return;
+        appendMessage(text, 'outgoing'); messageInput.value = '';
+        await sendMessageApi(text);
+        const incoming = await receiveMessageApi(); appendMessage(incoming, 'incoming');
+      });
+
+      messageInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendButton.click(); });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+.navbar {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.navbar__brand {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.btn--primary {
+  background-color: #ffc107;
+  border: none;
+  color: #212529;
+  font-weight: 600;
+}
+
+.btn--primary:hover {
+  background-color: #e0a800;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card__image {
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  padding: 1rem;
+}
+
+.product-card__body {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+}
+
+.product-card__footer {
+  padding: 1rem;
+  background: transparent;
+  border-top: none;
+}
